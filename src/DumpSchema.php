@@ -52,7 +52,10 @@ class DumpSchema
      */
     public function getConnection()
     {
-        return DB::connection($this->connectionName);
+        $connection = DB::connection($this->connectionName);
+        $connection->getDoctrineSchemaManager()->getDatabasePlatform()->registerDoctrineTypeMapping('enum', 'string');
+
+        return $connection;
     }
 
     protected function getTable(string $tableName)

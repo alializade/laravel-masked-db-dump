@@ -27,15 +27,20 @@ class DumpDatabaseCommand extends Command
 
     protected function writeOutput(string $dump)
     {
+        $dir = 'storage/app/';
+        $fileName = 'Dump_' . now()->format('Y-m-d_H-i') .'-'. str($this->argument('output'))->trim();
+
+        $filePath = $dir . $fileName;
+
         if ($this->option('gzip')) {
-            $gz = gzopen($this->argument('output') . '.gz', 'w9');
+            $gz = gzopen($filePath . '.gz', 'w9');
             gzwrite($gz, $dump);
             gzclose($gz);
 
-            $this->info('Wrote database dump to ' . $this->argument('output') . '.gz');
+            $this->info('Wrote database dump to ' . $filePath . '.gz');
         } else {
-            file_put_contents($this->argument('output'), $dump);
-            $this->info('Wrote database dump to ' . $this->argument('output'));
+            file_put_contents($filePath, $dump);
+            $this->info('Wrote database dump to ' . $filePath);
         }
     }
 }
