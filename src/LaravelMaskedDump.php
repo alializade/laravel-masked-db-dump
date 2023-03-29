@@ -21,7 +21,7 @@ class LaravelMaskedDump
         $this->output = $output;
     }
 
-    public function dump()
+    public function dump(): string
     {
         $tables = $this->definition->getDumpTables();
 
@@ -29,20 +29,25 @@ class LaravelMaskedDump
 
         $overallTableProgress = $this->output->createProgressBar(count($tables));
 
+        $query .= $this->disableStrictChecks($query);
+
         foreach ($tables as $tableName => $table) {
             $query .= "DROP TABLE IF EXISTS `$tableName`;" . PHP_EOL;
             $query .= $this->dumpSchema($table);
 
             if ($table->shouldDumpData()) {
-                $query .= $this->lockTable($tableName);
+//                $query .= $this->lockTable($tableName);
 
                 $query .= $this->dumpTableData($table);
 
-                $query .= $this->unlockTable($tableName);
+//                $query .= $this->unlockTable($tableName);
             }
 
             $overallTableProgress->advance();
         }
+
+        $query .= $this->enableStrictChecks($query);
+
 
         return $query;
     }
@@ -77,19 +82,31 @@ class LaravelMaskedDump
         return implode(";", $schema->toSql($platform)) . ";" . PHP_EOL;
     }
 
-    protected function lockTable(string $tableName)
+    protected function disableStrictChecks(string $query): string
     {
-        return "LOCK TABLES `$tableName` WRITE;" . PHP_EOL .
+        return "SET unique_checks=0; " . PHP_EOL .
+            "SET FOREIGN_KEY_CHECKS=0;" . PHP_EOL;
+    }
+
+    protected function enableStrictChecks(string $query): string
+    {
+        return "SET unique_checks=1; " . PHP_EOL .
+            "SET FOREIGN_KEY_CHECKS=1;" . PHP_EOL;
+    }
+
+    protected function lockTable(string $tableName): string
+    {
+        return PHP_EOL . "LOCK TABLES `$tableName` WRITE;" . PHP_EOL .
             "ALTER TABLE `$tableName` DISABLE KEYS;" . PHP_EOL;
     }
 
-    protected function unlockTable(string $tableName)
+    protected function unlockTable(string $tableName): string
     {
-        return "ALTER TABLE `$tableName` ENABLE KEYS;" . PHP_EOL .
+        return PHP_EOL . "ALTER TABLE `$tableName` ENABLE KEYS;" . PHP_EOL .
             "UNLOCK TABLES;" . PHP_EOL;
     }
 
-    protected function dumpTableData(TableDefinition $table)
+    protected function dumpTableData(TableDefinition $table): string
     {
         $query = '';
 
