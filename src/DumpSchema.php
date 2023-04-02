@@ -1,10 +1,10 @@
 <?php
 
-namespace BeyondCode\LaravelMaskedDumper;
+namespace AliAlizade\LaravelMaskedDumper;
 
 use Faker\Factory;
 use Doctrine\DBAL\Schema\Table;
-use BeyondCode\LaravelMaskedDumper\TableDefinitions\TableDefinition;
+use AliAlizade\LaravelMaskedDumper\TableDefinitions\TableDefinition;
 use Illuminate\Support\Facades\DB;
 
 class DumpSchema

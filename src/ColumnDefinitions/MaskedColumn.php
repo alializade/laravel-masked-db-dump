@@ -1,8 +1,8 @@
 <?php
 
-namespace BeyondCode\LaravelMaskedDumper\ColumnDefinitions;
+namespace AliAlizade\LaravelMaskedDumper\ColumnDefinitions;
 
-use BeyondCode\LaravelMaskedDumper\Contracts\Column;
+use AliAlizade\LaravelMaskedDumper\Contracts\Column;
 
 class MaskedColumn implements Column
 {

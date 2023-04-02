@@ -1,38 +1,65 @@
 # Laravel Masked DB Dump
 
-A database dumping package that allows you to replace and mask columns while dumping your database.
-
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/beyondcode/laravel-masked-db-dump.svg?style=flat-square)](https://packagist.org/packages/beyondcode/laravel-masked-db-dump)
-[![Total Downloads](https://img.shields.io/packagist/dt/beyondcode/laravel-masked-db-dump.svg?style=flat-square)](https://packagist.org/packages/beyondcode/laravel-masked-db-dump)
+This package is a fork of [masked-db-dump](https://github.com/beyondcode/laravel-masked-db-dump), A database dumping package that allows you to replace and mask columns while dumping your database.
 
 ## Installation
 
 You can install the package via composer:
 
 ```bash
-composer require beyondcode/laravel-masked-db-dump
+composer require alializade/laravel-masked-db-dump
 ```
+
+## Usage
+
+Use this dump schema definition to remove, replace or mask certain parts of your database tables.
+
+
+```php
+use AliAlizade\LaravelMaskedDumper\DumpSchema;
+use AliAlizade\LaravelMaskedDumper\TableDefinitions\TableDefinition;
+use Faker\Generator as Faker;
+
+class CoreServiceProvider extends ServiceProvider
+{
+    // ...
+    public function boot(): void
+    {
+        //... 
+        
+        $this->app->singleton('masked_dump_default', function () {
+            return DumpSchema::define('mysql')
+                ->allTables()
+                ->table('users', function (TableDefinition $table) {
+                    $table->replace('name', function (Faker $faker) {
+                        return $faker->name;
+                    });
+                    $table->replace('email', function (Faker $faker) {
+                        return $faker->lastName().'@fake.com';
+                    });
+                    $table->replace('password', function (Faker $faker) {
+                        return $password = bcrypt('secret');
+                    });
+                })
+                ->schemaOnly('personal_access_tokens')
+        });
+        // ...
+}
+
+```
+
+
+    $ php artisan db:masked-dump output.sql
+
+    $ php artisan db:masked-dump output.sql --gzip
 
 ## Documentation
 
-The documentation can be found on [our website](https://beyondco.de/docs/laravel-masked-db-dump).
-
-### Changelog
-
-Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
-
-## Contributing
-
-Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
+The documentation can be found on [the website](https://beyondco.de/docs/laravel-masked-db-dump).
 
 ### Security
 
-If you discover any security related issues, please email marcel@beyondco.de instead of using the issue tracker.
-
-## Credits
-
-- [Marcel Pociot](https://github.com/mpociot)
-- [All Contributors](../../contributors)
+If you discover any security related issues, please email ali.alizade@outlook.com instead of using the issue tracker.
 
 ## License
 

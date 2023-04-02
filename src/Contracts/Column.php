@@ -1,6 +1,6 @@
 <?php
 
-namespace BeyondCode\LaravelMaskedDumper\Contracts;
+namespace AliAlizade\LaravelMaskedDumper\Contracts;
 
 interface Column
 {

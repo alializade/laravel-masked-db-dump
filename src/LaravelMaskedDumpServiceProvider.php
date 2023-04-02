@@ -1,8 +1,8 @@
 <?php
 
-namespace BeyondCode\LaravelMaskedDumper;
+namespace AliAlizade\LaravelMaskedDumper;
 
-use BeyondCode\LaravelMaskedDumper\Console\DumpDatabaseCommand;
+use AliAlizade\LaravelMaskedDumper\Console\DumpDatabaseCommand;
 use Illuminate\Support\ServiceProvider;
 
 class LaravelMaskedDumpServiceProvider extends ServiceProvider

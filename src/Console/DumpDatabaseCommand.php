@@ -1,9 +1,9 @@
 <?php
 
-namespace BeyondCode\LaravelMaskedDumper\Console;
+namespace AliAlizade\LaravelMaskedDumper\Console;
 
 use Illuminate\Console\Command;
-use BeyondCode\LaravelMaskedDumper\LaravelMaskedDump;
+use AliAlizade\LaravelMaskedDumper\LaravelMaskedDump;
 
 class DumpDatabaseCommand extends Command
 {
@@ -13,7 +13,10 @@ class DumpDatabaseCommand extends Command
 
     public function handle()
     {
-        $definition = config('masked-dump.' . $this->option('definition'));
+        $definition = app(
+            config('masked-dump.' . $this->option('definition'))
+        );
+
         $definition->load();
 
         $this->info('Starting Database dump');

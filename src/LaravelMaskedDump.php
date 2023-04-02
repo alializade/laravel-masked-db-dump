@@ -1,11 +1,11 @@
 <?php
 
-namespace BeyondCode\LaravelMaskedDumper;
+namespace AliAlizade\LaravelMaskedDumper;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Schema\Schema;
 use Illuminate\Console\OutputStyle;
-use BeyondCode\LaravelMaskedDumper\TableDefinitions\TableDefinition;
+use AliAlizade\LaravelMaskedDumper\TableDefinitions\TableDefinition;
 
 class LaravelMaskedDump
 {

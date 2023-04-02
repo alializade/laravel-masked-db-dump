@@ -1,18 +1,17 @@
 {
     "name": "alializade/laravel-masked-db-dump",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "description": "Dump masked information from your database",
     "keywords": [
-        "beyondcode",
         "laravel-masked-db-dump"
     ],
-    "homepage": "https://github.com/beyondcode/laravel-masked-db-dump",
+    "homepage": "https://github.com/alializade/laravel-masked-db-dump",
     "license": "MIT",
     "authors": [
         {
-            "name": "Marcel Pociot",
-            "email": "marcel@beyondco.de",
-            "homepage": "https://beyondcode.de",
+            "name": "Ali Alizade",
+            "email": "ali.alizade@outlook.com",
+            "homepage": "https://github.com/alializade/laravel-masked-db-dump",
             "role": "Developer"
         }
     ],
@@ -30,12 +29,12 @@
     },
     "autoload": {
         "psr-4": {
-            "BeyondCode\\LaravelMaskedDumper\\": "src"
+            "AliAlizade\\LaravelMaskedDumper\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "BeyondCode\\LaravelMaskedDumper\\Tests\\": "tests"
+            "AliAlizade\\LaravelMaskedDumper\\Tests\\": "tests"
         }
     },
     "scripts": {
@@ -49,7 +48,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "BeyondCode\\LaravelMaskedDumper\\LaravelMaskedDumpServiceProvider"
+                "AliAlizade\\LaravelMaskedDumper\\LaravelMaskedDumpServiceProvider"
             ]
         }
     }

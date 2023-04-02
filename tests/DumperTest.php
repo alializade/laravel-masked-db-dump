@@ -1,10 +1,10 @@
 <?php
 
-namespace BeyondCode\LaravelMaskedDumper\Tests;
+namespace AliAlizade\LaravelMaskedDumper\Tests;
 
-use BeyondCode\LaravelMaskedDumper\DumpSchema;
-use BeyondCode\LaravelMaskedDumper\LaravelMaskedDumpServiceProvider;
-use BeyondCode\LaravelMaskedDumper\TableDefinitions\TableDefinition;
+use AliAlizade\LaravelMaskedDumper\DumpSchema;
+use AliAlizade\LaravelMaskedDumper\LaravelMaskedDumpServiceProvider;
+use AliAlizade\LaravelMaskedDumper\TableDefinitions\TableDefinition;
 use Faker\Generator;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Support\Facades\DB;

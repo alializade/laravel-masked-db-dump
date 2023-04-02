@@ -1,8 +1,8 @@
 <?php
 
-namespace BeyondCode\LaravelMaskedDumper\ColumnDefinitions;
+namespace AliAlizade\LaravelMaskedDumper\ColumnDefinitions;
 
-use BeyondCode\LaravelMaskedDumper\Contracts\Column;
+use AliAlizade\LaravelMaskedDumper\Contracts\Column;
 use Faker\Factory;
 
 class ReplacedColumn implements Column
