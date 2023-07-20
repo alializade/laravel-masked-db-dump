@@ -9,6 +9,7 @@ use Doctrine\DBAL\Schema\Table;
 class TableDefinition
 {
     const DUMP_FULL = 'full';
+    const DUMP_DATA = 'data';
     const DUMP_SCHEMA = 'schema';
 
     protected $table;
@@ -22,14 +23,21 @@ class TableDefinition
         $this->dumpType = static::DUMP_FULL;
     }
 
-    public function schemaOnly()
+    public function schemaOnly(): static
     {
         $this->dumpType = static::DUMP_SCHEMA;
 
         return $this;
     }
 
-    public function fullDump()
+    public function dataOnly(): static
+    {
+        $this->dumpType = static::DUMP_DATA;
+
+        return $this;
+    }
+
+    public function fullDump(): static
     {
         $this->dumpType = static::DUMP_FULL;
 
@@ -76,6 +84,11 @@ class TableDefinition
     public function shouldDumpData()
     {
         return $this->dumpType === static::DUMP_FULL;
+    }
+
+    public function shouldDumpOnlyData(): bool
+    {
+        return $this->dumpType === static::DUMP_DATA;
     }
 
     public function modifyQuery($query)

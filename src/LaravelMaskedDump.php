@@ -32,13 +32,18 @@ class LaravelMaskedDump
         $query .= $this->disableStrictChecks($query);
 
         foreach ($tables as $tableName => $table) {
-            $query .= "DROP TABLE IF EXISTS `$tableName`;" . PHP_EOL;
-            $query .= $this->dumpSchema($table);
+            if(!$table->shouldDumpOnlyData()) {
+                $query .= "DROP TABLE IF EXISTS `$tableName`;" . PHP_EOL;
+                $query .= $this->dumpSchema($table);
+            }
 
             if ($table->shouldDumpData()) {
 //                $query .= $this->lockTable($tableName);
 
-                $query .= $this->dumpTableData($table);
+                $query .= $this->dumpTableData(
+                    table: $table,
+                    dataOnly: $table->shouldDumpOnlyData()
+                );
 
 //                $query .= $this->unlockTable($tableName);
             }
@@ -106,7 +111,7 @@ class LaravelMaskedDump
             "UNLOCK TABLES;" . PHP_EOL;
     }
 
-    protected function dumpTableData(TableDefinition $table): string
+    protected function dumpTableData(TableDefinition $table, bool $dataOnly = false): string
     {
         $query = '';
 
@@ -116,11 +121,12 @@ class LaravelMaskedDump
         $table->modifyQuery($queryBuilder);
 
         $queryBuilder->get()
-            ->each(function ($row, $index) use ($table, &$query) {
+            ->each(function ($row, $index) use ($table, &$query, $dataOnly) {
                 $row = $this->transformResultForInsert((array)$row, $table);
                 $tableName = $table->getDoctrineTable()->getName();
 
-                $query .= "INSERT INTO `${tableName}` (`" . implode('`, `', array_keys($row)) . '`) VALUES ';
+                $query .= $dataOnly ? "INSERT IGNORE INTO " : "INSERT INTO ";
+                $query .= "`${tableName}` (`" . implode('`, `', array_keys($row)) . '`) VALUES ';
                 $query .= "(";
 
                 $firstColumn = true;
