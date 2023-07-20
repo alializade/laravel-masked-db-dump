@@ -32,7 +32,7 @@ class LaravelMaskedDump
         $query .= $this->disableStrictChecks($query);
 
         foreach ($tables as $tableName => $table) {
-            if(!$table->shouldDumpOnlyData()) {
+            if (!$table->shouldDumpOnlyData()) {
                 $query .= "DROP TABLE IF EXISTS `$tableName`;" . PHP_EOL;
                 $query .= $this->dumpSchema($table);
             }
@@ -120,26 +120,31 @@ class LaravelMaskedDump
 
         $table->modifyQuery($queryBuilder);
 
-        $queryBuilder->get()
-            ->each(function ($row, $index) use ($table, &$query, $dataOnly) {
-                $row = $this->transformResultForInsert((array)$row, $table);
-                $tableName = $table->getDoctrineTable()->getName();
+        $records = $queryBuilder->get();
 
-                $query .= $dataOnly ? "INSERT IGNORE INTO " : "INSERT INTO ";
-                $query .= "`${tableName}` (`" . implode('`, `', array_keys($row)) . '`) VALUES ';
-                $query .= "(";
+        $query .= $dataOnly ? "INSERT IGNORE INTO " : "INSERT INTO ";
+        $tableName = $table->getDoctrineTable()->getName();
+        $query .= "`${tableName}` (`" . implode('`, `', array_keys((array)$records->first())) . '`) VALUES ';
 
-                $firstColumn = true;
-                foreach ($row as $value) {
-                    if (!$firstColumn) {
-                        $query .= ", ";
-                    }
-                    $query .= $value;
-                    $firstColumn = false;
+        $total_count = $records->count();
+
+        $records->each(function ($row, $index) use ($table, &$query, $dataOnly,$total_count) {
+            $row = $this->transformResultForInsert((array)$row, $table);
+
+            $query .= "(";
+
+            $firstColumn = true;
+            foreach ($row as $value) {
+                if (!$firstColumn) {
+                    $query .= ", ";
                 }
+                $query .= $value;
+                $firstColumn = false;
+            }
 
-                $query .= ");" . PHP_EOL;
-            });
+            $query .= ")";
+            $query .= ($total_count == $index+1 ? ";" : ",") . PHP_EOL;
+        });
 
         return $query;
     }

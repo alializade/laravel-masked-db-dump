@@ -81,9 +81,9 @@ class TableDefinition
         return $this->table;
     }
 
-    public function shouldDumpData()
+    public function shouldDumpData(): bool
     {
-        return $this->dumpType === static::DUMP_FULL;
+        return $this->dumpType === static::DUMP_FULL || $this->dumpType === static::DUMP_DATA;
     }
 
     public function shouldDumpOnlyData(): bool

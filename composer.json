@@ -1,6 +1,6 @@
 {
     "name": "alializade/laravel-masked-db-dump",
-    "version": "1.0.6",
+    "version": "1.0.8",
     "description": "Dump masked information from your database",
     "keywords": [
         "laravel-masked-db-dump"
