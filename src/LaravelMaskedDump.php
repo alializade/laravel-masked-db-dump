@@ -122,6 +122,8 @@ class LaravelMaskedDump
 
         $records = $queryBuilder->get();
 
+        if($records->count() == 0) return '';
+
         $query .= $dataOnly ? "INSERT IGNORE INTO " : "INSERT INTO ";
         $tableName = $table->getDoctrineTable()->getName();
         $query .= "`${tableName}` (`" . implode('`, `', array_keys((array)$records->first())) . '`) VALUES ';
