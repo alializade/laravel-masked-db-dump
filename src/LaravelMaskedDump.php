@@ -15,6 +15,8 @@ class LaravelMaskedDump
     /** @var OutputStyle */
     protected $output;
 
+    protected $isFirstUser = false;
+
     public function __construct(DumpSchema $definition, OutputStyle $output)
     {
         $this->definition = $definition;
@@ -38,14 +40,14 @@ class LaravelMaskedDump
             }
 
             if ($table->shouldDumpData()) {
-//                $query .= $this->lockTable($tableName);
+                //                $query .= $this->lockTable($tableName);
 
                 $query .= $this->dumpTableData(
                     table: $table,
                     dataOnly: $table->shouldDumpOnlyData()
                 );
 
-//                $query .= $this->unlockTable($tableName);
+                //                $query .= $this->unlockTable($tableName);
             }
 
             $overallTableProgress->advance();
@@ -57,14 +59,23 @@ class LaravelMaskedDump
         return $query;
     }
 
-    protected function transformResultForInsert($row, TableDefinition $table)
+    protected function transformResultForInsert($row, TableDefinition $table, string $tableName)
     {
         /** @var Connection $connection */
         $connection = $this->definition->getConnection()->getDoctrineConnection();
 
-        return collect($row)->map(function ($value, $column) use ($connection, $table) {
+        return collect($row)->map(function ($value, $column) use ($connection, $table, $tableName) {
             if ($columnDefinition = $table->findColumn($column)) {
                 $value = $columnDefinition->modifyValue($value);
+            }
+
+            if($tableName === 'users' && $column === 'id' && $value === 1) {
+                $this->isFirstUser = true;
+            }
+
+            if($tableName === 'users' && $column === 'email' && $this->isFirstUser) {
+                $value = 'demo@fake.com';
+                $this->isFirstUser = false;
             }
 
             if ($value === null) {
@@ -120,18 +131,20 @@ class LaravelMaskedDump
 
         $table->modifyQuery($queryBuilder);
 
-        $records = $queryBuilder->get();
+        $tableName = $table->getDoctrineTable()->getName();
+        $columns = $this->definition->getConnection()->getSchemaBuilder()->getColumnListing($tableName);
 
-        if($records->count() == 0) return '';
+        $total_count = $queryBuilder->count();
+
+        if($total_count == 0) return '';
 
         $query .= $dataOnly ? "INSERT IGNORE INTO " : "INSERT INTO ";
-        $tableName = $table->getDoctrineTable()->getName();
-        $query .= "`${tableName}` (`" . implode('`, `', array_keys((array)$records->first())) . '`) VALUES ';
+        $query .= "`${tableName}` (`" . implode('`, `', $columns) . '`) VALUES ';
 
-        $total_count = $records->count();
+        $index = 0;
 
-        $records->each(function ($row, $index) use ($table, &$query, $dataOnly,$total_count) {
-            $row = $this->transformResultForInsert((array)$row, $table);
+        foreach ($queryBuilder->cursor() as $row) {
+            $row = $this->transformResultForInsert((array)$row, $table, $tableName);
 
             $query .= "(";
 
@@ -144,9 +157,10 @@ class LaravelMaskedDump
                 $firstColumn = false;
             }
 
-            $query .= ")";
-            $query .= ($total_count == $index+1 ? ";" : ",") . PHP_EOL;
-        });
+            $index++;
+
+            $query .= ($total_count == $index ? ");" : "),") . PHP_EOL;
+        }
 
         return $query;
     }
